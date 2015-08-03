@@ -44,7 +44,15 @@ class Game
     end
   end
 
+  def over?
+    won? || lost?
+  end
 
+  def won?
+    board.swept?
+  end
 
-
+  def lost?
+    board.exploded_bomb?
+  end
 end
