@@ -1,16 +1,21 @@
 class Tile
-  attr_accessor :revealed
-  attr_reader :pos, :board, :has_bomb
+  attr_accessor :revealed, :flagged
+  attr_reader :pos, :board, :has_bomb,
 
   def initialize(board, has_bomb, pos)
     @revealed = false
     @has_bomb = has_bomb
     @board = board
     @pos = pos
+    @flagged = false
   end
 
   def reveal! # should this have exclamation point?
-    self.revealed = true
+    self.revealed = true unless flagged
+  end
+
+  def flag # what about this?
+    self.flagged = true unless revealed
   end
 
   def neighbors
