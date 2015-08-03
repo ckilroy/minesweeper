@@ -46,4 +46,21 @@ class Tile
 
     bomb_count
   end
+
+  def has_bomb_neighbors?
+    neighbor_bomb_count > 0
+  end
+
+  def reveal_until_fringe
+    if has_bomb_neighbors?
+      reveal!
+      return
+    end
+
+    neighbors.each do |neighbor|
+      reveal!
+      neighbor.reveal_until_fringe unless neighbor.revealed
+    end
+  end
+
 end
