@@ -1,15 +1,34 @@
 require_relative 'tile'
+require 'colorize'
+
 
 class Board
   WIDTH = 9
   HEIGHT = 9
   NUM_BOMBS = 10
 
-attr_reader :grid
+attr_reader :grid, :cursor_pos
 
   def initialize
     @grid = Array.new(HEIGHT) { Array.new(WIDTH) }
     populate
+    @cursor_pos = [0,0]
+  end
+
+  def move_curs(direction)
+    if direction == :r
+      cursor_pos[1] += 1
+      cursor_pos[1] -= 1 unless on_board?(cursor_pos)
+    elsif direction == :l
+      cursor_pos[1] -= 1
+      cursor_pos[1] += 1 unless on_board?(cursor_pos)
+    elsif direction == :u
+      cursor_pos[0] -= 1
+      cursor_pos[0] += 1 unless on_board?(cursor_pos)
+    else
+      cursor_pos[0] += 1
+      cursor_pos[0] -= 1 unless on_board?(cursor_pos)
+    end
   end
 
   def populate
@@ -58,7 +77,11 @@ attr_reader :grid
     grid.each_with_index do |row, idx|
       print "#{idx} "
       row.each do |cell|
-        print cell
+        if cursor_pos == cell.pos
+          print cell.to_s.colorize(:red)
+        else
+          print cell
+        end
       end
       print "\n"
     end
