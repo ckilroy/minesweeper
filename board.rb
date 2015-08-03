@@ -17,7 +17,7 @@ attr_reader :grid
     (0...HEIGHT).each do |row_idx|
       (0...WIDTH).each do |col_idx|
         has_bomb = bomb_positions.include?([row_idx, col_idx])
-        self[row_idx, col_idx] = Tile.new(has_bomb)
+        self[row_idx, col_idx] = Tile.new(self, has_bomb, [row_idx, col_idx])
       end
     end
   end
@@ -57,5 +57,10 @@ attr_reader :grid
       end
       print "\n"
     end
+  end
+
+  def on_board?(pos)
+    x, y = pos
+    x.between?(0, HEIGHT - 1) && y.between?(0, WIDTH - 1)
   end
 end
