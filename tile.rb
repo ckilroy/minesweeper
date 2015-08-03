@@ -18,6 +18,10 @@ class Tile
     self.flagged = true unless revealed
   end
 
+  def unflag
+    self.flagged = false
+  end
+
   def neighbors
     neighbors = []
     differences = [ [ 0, 1],
