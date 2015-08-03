@@ -1,4 +1,5 @@
 require_relative 'board'
+require 'yaml'
 
 class Game
 
@@ -68,6 +69,17 @@ class Game
   def lost?
     board.exploded_bomb?
   end
+
+  def save_game
+    File.open("saved_game.txt", "w") do |f|
+      f.puts board.to_yaml
+    end
+  end
+
+  def load_game
+    @board = YAML.load(File.read("saved_game.txt"))
+  end
+
 end
 
 if __FILE__ == $PROGRAM_NAME
