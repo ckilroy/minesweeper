@@ -52,7 +52,11 @@ attr_reader :grid
         if cell.revealed == false
           print "* "
         else
-          print "_ "
+          if cell.neighbor_bomb_count == 0
+            print "_ "
+          else
+            print "#{cell.neighbor_bomb_count} "
+          end
         end
       end
       print "\n"
