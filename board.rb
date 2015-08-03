@@ -47,7 +47,11 @@ attr_reader :grid
   end
 
   def render
-    grid.each do |row|
+    system("clear")
+    puts "  #{(0...WIDTH).to_a.join(" ")}"
+
+    grid.each_with_index do |row, idx|
+      print "#{idx} "
       row.each do |cell|
         if cell.revealed == false
           print cell.flagged ? "F " : "* "
@@ -71,14 +75,18 @@ attr_reader :grid
   end
 
   def exploded_bomb?
-    grid.flatten.any? { |cell| cell.revealed && cell.has_bomb }
+    tiles.any? { |tile| tile.revealed && tile.has_bomb }
   end
 
   def swept?
-    grid.flatten.all? { |cell| cell.revealed || cell.has_bomb }
+    tiles.all? { |tile| tile.revealed || tile.has_bomb }
+  end
+
+  def tiles
+    grid.flatten
   end
 
   def reveal_all_bombs
-
+    tiles.each { |tile| tile.reveal! if tile.has_bomb }
   end
 end
