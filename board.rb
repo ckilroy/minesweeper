@@ -45,4 +45,17 @@ attr_reader :grid
     y_coord = rand(WIDTH)
     [x_coord, y_coord]
   end
+
+  def render
+    grid.each do |row|
+      row.each do |cell|
+        if cell.revealed == false
+          print "* "
+        else
+          print "_ "
+        end
+      end
+      print "\n"
+    end
+  end
 end
