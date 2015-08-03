@@ -5,21 +5,23 @@ class Game
 
   attr_reader :board
 
-  def initialize
-    @board = Board.new
-    @board.populate
+  def initialize(board)
+    @board = board
   end
 
-  def ask_to_load_game
+  def self.start_game
     puts "Press l to load game. Otherwise press enter."
     print "> "
     input = gets.chomp.downcase
-    load_game if input == "l"
+    if input == "l"
+      game = Game.new(YAML.load(File.read("saved_game.txt")))
+    else
+      game = Game.new(Board.new)
+    end
+    game.play
   end
 
   def play
-    ask_to_load_game
-
     take_turn until over?
 
     if won?
@@ -88,12 +90,8 @@ class Game
       f.puts board.to_yaml
     end
   end
-
-  def load_game
-    @board = YAML.load(File.read("saved_game.txt"))
-  end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  Game.new.play
+  Game.start_game
 end

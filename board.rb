@@ -9,6 +9,7 @@ attr_reader :grid
 
   def initialize
     @grid = Array.new(HEIGHT) { Array.new(WIDTH) }
+    populate
   end
 
   def populate
