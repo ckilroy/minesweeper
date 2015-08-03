@@ -10,7 +10,7 @@ class Game
   end
 
   def play
-
+    take_turn until over?
   end
 
   def get_pos
@@ -32,6 +32,19 @@ class Game
       puts "That's not a valid move."
     end
   end
+
+  def take_turn
+    pos = get_pos
+    move = get_move
+
+    if move == :f
+      board[pos].flag
+    else
+      board[pos].reveal_until_fringe
+    end
+  end
+
+
 
 
 end
