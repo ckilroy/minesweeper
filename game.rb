@@ -10,7 +10,16 @@ class Game
     @board.populate
   end
 
+  def ask_to_load_game
+    puts "Press l to load game. Otherwise press enter."
+    print "> "
+    input = gets.chomp.downcase
+    load_game if input == "l"
+  end
+
   def play
+    ask_to_load_game
+
     take_turn until over?
 
     if won?
@@ -35,10 +44,10 @@ class Game
 
   def get_move
     loop do
-      puts "Flag, Unflag or Reveal? (f/u/r)"
+      puts "Flag, Unflag or Reveal? (f/u/r) Or Save? (s)"
       print "> "
       move = gets.chomp.downcase
-      return move.to_sym if ["f", "u", "r"].include?(move)
+      return move.to_sym if ["f", "u", "r", "s"].include?(move)
       puts "That's not a valid move."
     end
   end
@@ -46,8 +55,12 @@ class Game
   def take_turn
     board.render
 
-    pos = get_pos
     move = get_move
+    if move == :s
+      save_game
+      return
+    end
+    pos = get_pos
 
     if move == :f
       board[pos].flag
@@ -79,7 +92,6 @@ class Game
   def load_game
     @board = YAML.load(File.read("saved_game.txt"))
   end
-
 end
 
 if __FILE__ == $PROGRAM_NAME
