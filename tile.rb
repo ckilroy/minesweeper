@@ -1,6 +1,17 @@
 class Tile
-  attr_accessor :revealed, :flagged
-  attr_reader :pos, :board, :has_bomb
+  DELTAS = [
+    [ 0, 1],
+    [ 1, 1],
+    [ 1, 0],
+    [ 1,-1],
+    [ 0,-1],
+    [-1,-1],
+    [-1, 0],
+    [-1, 1]
+  ]
+
+  attr_writer :revealed, :flagged
+  attr_reader :pos, :board
 
   def initialize(board, has_bomb, pos)
     @revealed = false
@@ -10,12 +21,24 @@ class Tile
     @flagged = false
   end
 
-  def reveal! # should this have exclamation point?
-    self.revealed = true unless flagged
+  def has_bomb?
+    @has_bomb
   end
 
-  def flag # what about this?
-    self.flagged = true unless revealed
+  def revealed?
+    @revealed
+  end
+
+  def flagged?
+    @flagged
+  end
+
+  def reveal
+    self.revealed = true unless flagged?
+  end
+
+  def flag
+    self.flagged = true unless revealed?
   end
 
   def unflag
@@ -24,17 +47,9 @@ class Tile
 
   def neighbors
     neighbors = []
-    differences = [ [ 0, 1],
-                    [ 1, 1],
-                    [ 1, 0],
-                    [ 1,-1],
-                    [ 0,-1],
-                    [-1,-1],
-                    [-1, 0],
-                    [-1, 1] ]
 
-    differences.each do |difference|
-      neighbor_pos = pos[0] + difference[0], pos[1] + difference[1]
+    DELTAS.each do |delta|
+      neighbor_pos = pos[0] + delta[0], pos[1] + delta[1]
       neighbors << board[neighbor_pos] if board.on_board?(neighbor_pos)
     end
 
@@ -42,13 +57,7 @@ class Tile
   end
 
   def neighbor_bomb_count
-    bomb_count = 0
-
-    neighbors.each do |neighbor|
-      bomb_count += 1 if neighbor.has_bomb
-    end
-
-    bomb_count
+    neighbors.count { |neighbor| neighbor.has_bomb? }
   end
 
   def has_bomb_neighbors?
@@ -57,14 +66,31 @@ class Tile
 
   def reveal_until_fringe
     if has_bomb_neighbors?
-      reveal!
+      reveal
       return
     end
 
     neighbors.each do |neighbor|
-      reveal!
-      neighbor.reveal_until_fringe unless neighbor.revealed
+      reveal
+      neighbor.reveal_until_fringe unless neighbor.revealed?
     end
   end
 
+  def to_s
+    if !revealed?
+      flagged? ? "F " : "* "
+    else
+      if has_bomb?
+        "X "
+      elsif neighbor_bomb_count == 0
+        "_ "
+      else
+        "#{neighbor_bomb_count} "
+      end
+    end
+  end
+
+  def exploded?
+    revealed? && has_bomb?
+  end
 end

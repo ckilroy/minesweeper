@@ -16,8 +16,9 @@ attr_reader :grid
 
     (0...HEIGHT).each do |row_idx|
       (0...WIDTH).each do |col_idx|
-        has_bomb = bomb_positions.include?([row_idx, col_idx])
-        self[row_idx, col_idx] = Tile.new(self, has_bomb, [row_idx, col_idx])
+        pos = [row_idx, col_idx]
+        has_bomb = bomb_positions.include?(pos)
+        self[pos] = Tile.new(self, has_bomb, pos)
       end
     end
   end
@@ -27,16 +28,19 @@ attr_reader :grid
     grid[x][y]
   end
 
-  def []=(x, y, value)
+  def []=(pos, value)
+    x, y = pos
     grid[x][y] = value
   end
 
   def choose_bomb_positions
     bomb_positions = []
+
     until bomb_positions.size == NUM_BOMBS
       new_pos = random_pos
       bomb_positions << new_pos unless bomb_positions.include?(new_pos)
     end
+
     bomb_positions
   end
 
@@ -53,17 +57,7 @@ attr_reader :grid
     grid.each_with_index do |row, idx|
       print "#{idx} "
       row.each do |cell|
-        if cell.revealed == false
-          print cell.flagged ? "F " : "* "
-        else
-          if cell.has_bomb
-            print "X "
-          elsif cell.neighbor_bomb_count == 0
-            print "_ "
-          else
-            print "#{cell.neighbor_bomb_count} "
-          end
-        end
+        print cell
       end
       print "\n"
     end
@@ -75,11 +69,11 @@ attr_reader :grid
   end
 
   def exploded_bomb?
-    tiles.any? { |tile| tile.revealed && tile.has_bomb }
+    tiles.any? { |tile| tile.exploded? }
   end
 
   def swept?
-    tiles.all? { |tile| tile.revealed || tile.has_bomb }
+    tiles.all? { |tile| tile.revealed? || tile.has_bomb? }
   end
 
   def tiles
@@ -87,6 +81,6 @@ attr_reader :grid
   end
 
   def reveal_all_bombs
-    tiles.each { |tile| tile.reveal! if tile.has_bomb }
+    tiles.each { |tile| tile.reveal if tile.has_bomb? }
   end
 end
