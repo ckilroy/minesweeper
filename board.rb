@@ -50,7 +50,7 @@ attr_reader :grid
     grid.each do |row|
       row.each do |cell|
         if cell.revealed == false
-          print "* "
+          print cell.flagged ? "F " : "* "
         else
           if cell.neighbor_bomb_count == 0
             print "_ "
