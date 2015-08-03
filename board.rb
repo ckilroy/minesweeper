@@ -52,7 +52,9 @@ attr_reader :grid
         if cell.revealed == false
           print cell.flagged ? "F " : "* "
         else
-          if cell.neighbor_bomb_count == 0
+          if cell.has_bomb
+            print "X "
+          elsif cell.neighbor_bomb_count == 0
             print "_ "
           else
             print "#{cell.neighbor_bomb_count} "
@@ -66,5 +68,17 @@ attr_reader :grid
   def on_board?(pos)
     x, y = pos
     x.between?(0, HEIGHT - 1) && y.between?(0, WIDTH - 1)
+  end
+
+  def exploded_bomb?
+    grid.flatten.any? { |cell| cell.revealed && cell.has_bomb }
+  end
+
+  def swept?
+    grid.flatten.all? { |cell| cell.revealed || cell.has_bomb }
+  end
+
+  def reveal_all_bombs
+
   end
 end
